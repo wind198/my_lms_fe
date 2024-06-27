@@ -20,6 +20,9 @@ export const LOGIN_ROUTE = 'login'
 export const NOT_FOUND_ROUTE = 'not-found'
 export const FORBIDEN_ROUTE = 'forbiden'
 export const UNEXPECTED_ERROR_ROUTE = 'unexpected-error'
+export const GUARDED_NOT_FOUND_ROUTE = 'guarded-not-found'
+export const GUARDED_FORBIDEN_ROUTE = 'guarded-forbiden'
+export const GUARDED_UNEXPECTED_ERROR_ROUTE = 'guarded-unexpected-error'
 export const DASHBOARD_ROUTE = 'dashboard'
 export const STUDENT_MANAGEMENT_ROUTE = 'management__student'
 export const STUDENT_LIST_ROUTE = 'management__list-student'
@@ -50,17 +53,26 @@ const router = createRouter({
         {
           path: '/404',
           name: NOT_FOUND_ROUTE,
-          component: NotFound
+          component: NotFound,
+          meta: {
+            title: 'Not found'
+          }
         },
         {
           path: '/403',
           name: FORBIDEN_ROUTE,
-          component: Forbiden
+          component: Forbiden,
+          meta: {
+            title: 'Forbiden'
+          }
         },
         {
           path: '/500',
           name: UNEXPECTED_ERROR_ROUTE,
-          component: UnexpectedError
+          component: UnexpectedError,
+          meta: {
+            title: 'Unexpected error'
+          }
         },
         /**----------------------------------- GUARDED ROUTES -----------------------------------*/
         {
@@ -68,6 +80,30 @@ const router = createRouter({
           component: AuthenticationGuard,
           redirect: { name: DASHBOARD_ROUTE },
           children: [
+            {
+              path: '/error-404',
+              name: GUARDED_NOT_FOUND_ROUTE,
+              component: NotFound,
+              meta: {
+                title: 'Not found'
+              }
+            },
+            {
+              path: '/error-403',
+              name: GUARDED_FORBIDEN_ROUTE,
+              component: Forbiden,
+              meta: {
+                title: 'Forbiden'
+              }
+            },
+            {
+              path: '/error-503',
+              name: GUARDED_UNEXPECTED_ERROR_ROUTE,
+              component: UnexpectedError,
+              meta: {
+                title: 'Unexpected error'
+              }
+            },
             {
               path: '/dashboard',
               name: DASHBOARD_ROUTE,

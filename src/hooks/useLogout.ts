@@ -5,8 +5,8 @@ export default function useLogout() {
   const queryClient = useQueryClient()
 
   const logout = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['user-profile'] })
     appLocalStorage.removeJwtToken()
+    await queryClient.invalidateQueries({ queryKey: ['user-profile'] })
   }
 
   return { logout }

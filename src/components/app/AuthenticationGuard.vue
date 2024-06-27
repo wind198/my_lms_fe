@@ -19,7 +19,15 @@ watchEffect(async () => {
     return
   }
   if (!userProfileQuery.data.value) {
-    await userProfileQuery.refetch()
+    try {
+      await userProfileQuery.refetch({
+        throwOnError: true
+      })
+    } catch (error: any) {
+      console.error(error)
+      const status = error.status
+      console.log({ status })
+    }
   }
 })
 </script>

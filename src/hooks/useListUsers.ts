@@ -9,9 +9,7 @@ import type { IUser, IUserType } from './useUserProfile'
 import { removeNullUndefineOrEmptyKeyFromObject } from '../common/helpers'
 import { computed, watch } from 'vue'
 
-type IStudent = IUser
-
-type IStudentListQueryKey = ['students', IPagination & { type: string; sort: string }]
+type IListUserQueryKey = ['users', IPagination & { type: string; sort: string }]
 
 export function useListUsers({ type }: { type: IUserType }) {
   const axiosClient = useAxiosClient()
@@ -32,14 +30,14 @@ export function useListUsers({ type }: { type: IUserType }) {
   const pageSize = computed(() => searchParamStore.searchParamMap.pageSize)
 
   const res = useQuery<
-    IPaginatedData<IStudent>,
+    IPaginatedData<IUser>,
     AxiosError,
-    IPaginatedData<IStudent>,
-    IStudentListQueryKey
+    IPaginatedData<IUser>,
+    IListUserQueryKey
   >({
     placeholderData: (i) => i,
     queryKey: [
-      'students',
+      'users',
       {
         type,
         page: page,

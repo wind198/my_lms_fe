@@ -26,7 +26,7 @@ const validate = () => {
 defineExpose({ validate })
 </script>
 <template>
-  <VForm ref="formRef" validate-on="lazy submit" @submit.prevent="onSubmit">
+  <VForm ref="formRef" validate-on="lazy input" @submit.prevent="onSubmit">
     <slot></slot>
     <div class="form-actions d-flex flex-end align-center">
       <VBtn flat color="default"> {{ secondaryText }} </VBtn>

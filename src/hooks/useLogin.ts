@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { useNotificationStore } from '../stores/useNotificationStore'
+import { ERROR_400_NOTI, useNotificationStore } from '../stores/useNotificationStore'
 import useAxiosClient from './useAxiosClient'
 import { textMap } from '../common/constants/text'
 import { useRouter } from 'vue-router'
@@ -46,7 +46,11 @@ export default function useLogin() {
       const statusCode = error?.response?.data?.error?.status
       switch (statusCode) {
         case 400:
-          notiStore.openNotification(textMap.messages.invalidEmailOrPassword, 'error', true)
+          notiStore.openNotification(
+            textMap.messages.invalidEmailOrPassword,
+            'error',
+            ERROR_400_NOTI
+          )
           break
       }
     }

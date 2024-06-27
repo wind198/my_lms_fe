@@ -17,6 +17,8 @@ export const textMap = {
     abbr: 'LMS'
   },
   nouns: {
+    phone: 'Điện thoại',
+    content: 'Nội dung',
     dashboard: 'Tổng hợp',
     business: 'Kinh doanh',
     learning: 'Học tập',
@@ -35,13 +37,17 @@ export const textMap = {
     attendance: 'Điểm danh',
     schedule: 'Lịch học',
     student: 'Học viên',
+    staff: 'Nhân viên',
     teacher: 'Giảng viên',
     admin: 'Quản lý',
     firstName: 'Họ',
     lastName: 'Tên',
     fullName: 'Họ và tên',
-    type: 'Loại',
-    educationBackground: 'Học vấn'
+    type: 'Phân loại',
+    educationBackground: 'Học vấn',
+    highschool: 'Học sinh cấp 3',
+    under_graduate: 'Sinh viên',
+    graduate: 'Tốt nghiệp đại học'
   },
   validations: {
     required: 'Bắt buộc',
@@ -78,15 +84,21 @@ export const textMap = {
     finish: 'Kết thúc'
   },
   messages: {
+    badRequest: 'Thông tin gửi đi không hợp lệ',
     welcome: 'Chào mừng đến với Hệ thống quản lý học tập',
     welcomeBack: translate`Xin chào, ${'name'}. Chào mứng quay trở lại`,
     success: translate`${'action'} thành công`,
-    error: 'Có lỗi xảy ra',
+    error: 'Có lỗi bất ngờ xảy ra',
+    errorLong:
+      'Có lỗi bất ngờ xảy ra, vui lòng liên hệ quản trị viên để được hỗ trợ hoặc thử lại sau',
     loading: 'Đang tải...',
     noData: 'Không có dữ liệu',
     unauthorized: 'Không có quyền truy cập',
     forbidden: 'Truy cập bị từ chối',
+    forbiddenLong:
+      'Bạn không có quyền truy cập địa chỉ này, vui lòng liên hệ quản trị viên để được giúp đỡ',
     notFound: translate`Không tìm thấy ${'item'}`,
+    notFoundLong: 'Nội dung bạn tìm kiếm không tồn tại hoặc đã bị xóa',
     pleaseLogin: 'Vui lòng đăng nhập',
     invalidEmailOrPassword: 'Email hoặc mật khẩu không đúng'
   }

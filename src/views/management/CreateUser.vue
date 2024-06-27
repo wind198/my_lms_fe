@@ -1,43 +1,67 @@
 <script setup lang="ts">
-import { educationBackgroundOptions, typeOptions as $typeOptions } from '@/common/constants'
+import {
+  educationBackgroundOptions,
+  userTypeOptions as $typeOptions,
+  IS_DEV
+} from '@/common/constants'
 import { textMap } from '@/common/constants/text'
 import { uppercaseFirstLetter } from '@/common/helpers'
 import { validationRules } from '@/common/helpers/validations'
 import BaseForm from '@/components/base/BaseForm.vue'
 import useAxiosClient from '@/hooks/useAxiosClient'
-import useCreateUser from '@/hooks/useCreateUser'
+import useCreateUser, { type ICreateUserFormData } from '@/hooks/useCreateUser'
 import type { IUserType } from '@/hooks/useUserProfile'
 import { debounce, startCase, upperFirst } from 'lodash-es'
 import { stringify } from 'qs'
 import { computed, reactive, ref } from 'vue'
 import { VContainer, VSelect, VTextField } from 'vuetify/components'
+import useRoles from '../../hooks/useRoles'
+import { useNotificationStore } from '../../stores/useNotificationStore'
+
+type ICreateUserFormDataTruncated = Omit<ICreateUserFormData, 'username' | 'role'>
 
 const props = defineProps<{ type: IUserType }>()
 
 const educationOptions = educationBackgroundOptions.map((i) => ({
-  title: upperFirst(startCase(i).toLowerCase()),
+  title: textMap.nouns[i] ?? i,
   value: i
 }))
 
 const typeOptions = $typeOptions.map((i) => ({
-  title: upperFirst(startCase(i).toLowerCase()),
+  // @ts-expect-error
+  title: textMap.nouns[i] ?? i,
   value: i
 }))
 
 const axiosClient = useAxiosClient()
 
+const notiStore = useNotificationStore()
+
 const createUserMutation = useCreateUser()
 
-const form = reactive({
-  username: '',
-  email: '',
-  password: '',
-  firstName: '',
-  lastName: '',
-  phone: '',
-  educationBackground: '',
-  type: ''
-})
+const { data: roleList } = useRoles()
+
+const form = reactive<ICreateUserFormDataTruncated>(
+  IS_DEV
+    ? {
+        email: 'tuan.le2@niteco.se',
+        password: 'Abcd1234',
+        firstName: 'Lê',
+        lastName: 'Hoàng Tuấn',
+        phone: '0968576908',
+        educationBackground: 'graduate',
+        type: 'admin'
+      }
+    : {
+        email: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        educationBackground: 'highschool',
+        type: 'student'
+      }
+)
 
 const isFormValid = ref(true)
 
@@ -47,15 +71,34 @@ const formRef = ref<any>(null)
 
 const usedEmails = ref<string[]>([])
 
-const onSubmit = (data: any) => {
+const onSubmit = async (data: any) => {
   isFormValid.value = data.valid
   if (!data.valid) {
     return
   }
+
+  const matchRole = roleList.value?.roles?.find((r) => r.type === form.type)
+  if (!matchRole) {
+    return
+  }
+
+  const formData: ICreateUserFormDataTruncated = {
+    email: form.email,
+    password: form.password,
+    firstName: form.firstName,
+    lastName: form.lastName,
+    phone: form.phone,
+    educationBackground: form.educationBackground,
+    type: form.type
+  }
+  await createUserMutation.mutateAsync({
+    ...formData,
+    role: matchRole.id
+  })
+  notiStore.openNotification(textMap.messages.success({ action: textMap.verbs.create }), 'success')
 }
 
 const checkDupplicatedEmail = async (v: string) => {
-  console.log('check dupplication')
   try {
     const { data } = await axiosClient.value.get(`users/count?${stringify({ email: { $eq: v } })}`)
     if (data) {
@@ -69,6 +112,9 @@ const checkDupplicatedEmail = async (v: string) => {
 }
 
 const onUpdateEmail = debounce(async (v: string) => {
+  const isValidEmail = validationRules.email()(v)
+  if (isValidEmail !== true) return
+
   await checkDupplicatedEmail(v)
 }, 250)
 
@@ -109,16 +155,16 @@ const noDuplicate = (v: string) => {
           ></VTextField>
           <VTextField
             v-model="form.lastName"
-            :label="textMap.nouns.firstName"
+            :label="textMap.nouns.lastName"
             :rules="[validationRules.required()]"
             required
           ></VTextField>
         </div>
-        <VTextField v-model="form.phone" label="Phone"></VTextField>
+        <VTextField v-model="form.phone" :label="textMap.nouns.phone"></VTextField>
         <VSelect
           v-model="form.educationBackground"
           :items="educationOptions"
-          :label="textMap.nouns.firstName"
+          :label="textMap.nouns.educationBackground"
           required
           :rules="[validationRules.required()]"
         ></VSelect>
@@ -126,7 +172,7 @@ const noDuplicate = (v: string) => {
           :rules="[validationRules.required()]"
           v-model="form.type"
           :items="typeOptions"
-          label="Type"
+          :label="textMap.nouns.type"
           required
         ></VSelect>
       </BaseForm>

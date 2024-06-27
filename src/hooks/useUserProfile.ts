@@ -3,14 +3,8 @@ import useAxiosClient from './useAxiosClient'
 import { appLocalStorage } from '../common/singleton/localStorage'
 import { stringify } from 'qs'
 import type { IHasId } from '../common/types'
-
-export type IRole = IHasId & {
-  name: string
-  description: string
-  type: string
-  createdAt: string
-  updatedAt: string
-}
+import { computed } from 'vue'
+import type { IRole } from './useRoles'
 
 export type IUserType = 'admin' | 'teacher' | 'student' | 'staff'
 
@@ -51,5 +45,7 @@ export default function useUserProfile() {
     enabled: false
   })
 
-  return userProfileQuery
+  const isAuthenticated = computed(() => !!userProfileQuery.data.value)
+
+  return { ...userProfileQuery, isAuthenticated }
 }
